@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JD Resume Tailor</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2314233c'/%3E%3Ctext x='16' y='21.5' font-family='Arial' font-size='14' font-weight='700' fill='%23fff' text-anchor='middle'%3ERT%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="/app.css">
+</head>
+<body>
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="mark">RT</div>
+      <div><div class="brand-name">JD Resume Tailor</div><div class="brand-sub">Application studio</div></div>
+    </div>
+    <nav>
+      <a href="#new" data-view="new" class="nav-item">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 4v12M4 10h12" /></svg>New application</a>
+      <a href="#history" data-view="history" class="nav-item">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h9" /></svg>History</a>
+      <a href="#settings" data-view="settings" class="nav-item">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="2.6"/><path d="M10 2.5v2.2M10 15.3v2.2M17.5 10h-2.2M4.7 10H2.5M15.3 4.7l-1.6 1.6M6.3 13.7l-1.6 1.6M15.3 15.3l-1.6-1.6M6.3 6.3L4.7 4.7"/></svg>Settings</a>
+    </nav>
+    <div class="side-foot">
+      <div class="status-pill" id="statusPill"><span class="dot"></span><span id="statusText">Checking…</span></div>
+      <p>Files and history stay on this computer.</p>
+    </div>
+  </aside>
+
+  <main class="main">
+    <!-- NEW APPLICATION -->
+    <section class="view" id="view-new">
+      <header class="page-head">
+        <div>
+          <div class="eyebrow">New application</div>
+          <h1>Tailor a resume to a job description</h1>
+          <p class="lede">Upload a resume, paste the job description and generate an ATS-ready resume, cover letter, application email and self-introduction.</p>
+        </div>
+      </header>
+
+      <div id="setupNotice" class="notice" hidden>
+        <div id="setupText"></div>
+        <a class="btn btn-secondary" href="#settings">Open Settings</a>
+      </div>
+
+      <div class="form-grid">
+        <div class="card">
+          <div class="card-head"><span class="step">1</span><h2>Resume</h2></div>
+          <label class="dropzone" id="dropzone" for="fileInput">
+            <input type="file" id="fileInput" accept=".docx,.pdf,.txt,.md">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0l-4 4m4-4l4 4M5 16v3h14v-3"/></svg>
+            <span class="dz-title">Upload resume</span>
+            <span class="dz-sub">Drag a file here or click to browse · .docx, .pdf or .txt · up to 10 MB</span>
+          </label>
+          <div class="file-chip" id="fileChip" hidden>
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 2.5h6.5L15 6v11.5H5z M11.5 2.5V6H15"/></svg>
+            <span id="fileName"></span><span class="muted" id="fileMeta"></span>
+            <button type="button" class="link" id="clearFile">Remove</button>
+          </div>
+          <details class="text-toggle" id="resumeDetails">
+            <summary>Or paste / review resume text</summary>
+            <textarea id="resumeText" rows="12" placeholder="Paste the full resume text here."></textarea>
+          </details>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><span class="step">2</span><h2>Job description</h2>
+            <button type="button" class="link push" id="sampleJd">Use a sample JD</button></div>
+          <textarea id="jdText" rows="14" placeholder="Paste the complete job description: role summary, responsibilities, requirements and skills."></textarea>
+          <div class="counter" id="jdCount">0 words</div>
+        </div>
+
+        <div class="card span-2">
+          <div class="card-head"><span class="step">3</span><h2>Preferences <span class="muted small">(optional)</span></h2></div>
+          <div class="fields">
+            <div class="field"><label for="company">Company name</label><input id="company" type="text" placeholder="Detected from the JD if left blank"></div>
+            <div class="field"><label for="manager">Hiring manager</label><input id="manager" type="text" placeholder="e.g. Ms. Priya Nair"></div>
+            <div class="field"><label for="region">Job location / market</label>
+              <select id="region">
+                <option value="india">India</option>
+                <option value="gcc">Middle East / GCC</option>
+                <option value="global">US / UK / Europe / Global</option>
+              </select></div>
+            <div class="field"><label for="tone">Writing tone</label>
+              <select id="tone">
+                <option value="professional">Professional</option>
+                <option value="confident">Confident</option>
+                <option value="warm">Warm</option>
+              </select></div>
+            <div class="field span-all"><label for="extra">Points to highlight</label><input id="extra" type="text" placeholder="e.g. Immediate joiner, open to relocation, preparing for PMP"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="actionbar">
+        <p class="muted small">The AI only rewords and reorders what is in the resume. It never invents employers, titles, numbers or certifications.</p>
+        <div class="gen-group">
+          <label class="ai-switch" for="providerQuick"><span>AI</span>
+            <select id="providerQuick" aria-label="AI used for this application"></select></label>
+        <button type="button" class="btn btn-primary btn-lg" id="generateBtn">Generate application</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESULTS -->
+    <section class="view" id="view-result" hidden>
+      <header class="page-head">
+        <div>
+          <a href="#history" class="back">← All applications</a>
+          <h1 id="rTitle">Application</h1>
+          <p class="lede" id="rSub"></p>
+        </div>
+        <div class="head-actions">
+          <a class="btn btn-secondary" href="#new">New application</a>
+          <a class="btn btn-primary" id="dlAll" href="#">Download all (.zip)</a>
+        </div>
+      </header>
+      <div class="demo-banner" id="demoBanner" hidden><span><b>Sample output.</b> This was made in demo mode and is not based on the uploaded resume or JD.</span><a class="link" href="#settings">Connect a real AI</a></div>
+      <div class="tabs" role="tablist" id="tabs">
+        <button role="tab" data-tab="overview">Match report</button>
+        <button role="tab" data-tab="resume">ATS resume</button>
+        <button role="tab" data-tab="cover">Cover letter</button>
+        <button role="tab" data-tab="email">Email</button>
+        <button role="tab" data-tab="intro">Self-introduction</button>
+        <button role="tab" data-tab="qa">Interview Q&amp;A</button>
+        <button role="tab" data-tab="practice">Interview practice</button>
+      </div>
+      <div id="tabBody"></div>
+    </section>
+
+    <!-- HISTORY -->
+    <section class="view" id="view-history" hidden>
+      <header class="page-head">
+        <div><div class="eyebrow">History</div><h1>Saved applications</h1>
+          <p class="lede">Every generated application is saved here so you can download it again.</p></div>
+        <div class="head-actions"><a class="btn btn-primary" href="#new">New application</a></div>
+      </header>
+      <div class="card flush" id="historyCard"></div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section class="view" id="view-settings" hidden>
+      <header class="page-head">
+        <div><div class="eyebrow">Settings</div><h1>AI connection</h1>
+          <p class="lede">Choose which AI writes your documents. Keys are stored only in the <code>.env</code> file on this computer.</p></div>
+      </header>
+      <div class="provider-grid" role="radiogroup" aria-label="AI provider">
+        <button type="button" class="provider" data-provider="demo" role="radio">
+          <span class="p-top"><span class="p-name">Demo mode</span><span class="tag free">Free</span></span>
+          <span class="p-desc">Sample answers to try every screen. Not based on your resume.</span></button>
+        <button type="button" class="provider" data-provider="gemini" role="radio">
+          <span class="p-top"><span class="p-name">Google Gemini</span><span class="tag free">Free tier</span></span>
+          <span class="p-desc">Real tailored output at no cost, within Google's daily free limits. Best for testing.</span></button>
+        <button type="button" class="provider" data-provider="anthropic" role="radio">
+          <span class="p-top"><span class="p-name">Anthropic Claude</span><span class="tag paid">Paid</span></span>
+          <span class="p-desc">Highest writing quality. About ₹5–12 per application.</span></button>
+        <button type="button" class="provider" data-provider="ollama" role="radio">
+          <span class="p-top"><span class="p-name">Ollama</span><span class="tag free">Free · offline</span></span>
+          <span class="p-desc">Runs an AI model on this Mac. Private, slower, lower quality.</span></button>
+      </div>
+
+      <div class="settings-grid">
+        <div class="card" id="providerForm">
+          <div class="card-head"><h2 id="pfTitle">Connection</h2><span class="tag active-tag push" id="activeTag" hidden>In use</span></div>
+          <div id="pfDemo" class="muted">Demo mode needs no setup. Press <b>Use demo mode</b>, then generate to see sample results.</div>
+          <div class="field" id="pfKeyField"><label for="apiKey" id="apiKeyLabel">API key</label>
+            <input id="apiKey" type="password" autocomplete="off" placeholder=""></div>
+          <div class="field" id="pfUrlField"><label for="ollamaUrl">Ollama address</label>
+            <input id="ollamaUrl" type="text" placeholder="http://localhost:11434"></div>
+          <div class="muted small" id="keyHint"></div>
+          <div class="field" id="pfModelField" style="margin-top:16px"><label for="modelSelect">Model</label>
+            <select id="modelSelect"><option value="">Chosen automatically after testing</option></select></div>
+          <div class="row-actions">
+            <button class="btn btn-primary" id="saveKey" type="button">Test &amp; save</button>
+            <span class="small" id="saveMsg"></span>
+          </div>
+        </div>
+        <div class="card soft" id="providerHelp"></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="overlay" id="progress" hidden>
+  <div class="progress-card" role="status" aria-live="polite">
+    <h3>Preparing the application</h3>
+    <ol class="progress-steps" id="progressSteps">
+      <li>Reading the resume</li>
+      <li>Analysing the job description</li>
+      <li>Matching keywords and experience</li>
+      <li>Writing the ATS resume</li>
+      <li>Writing the cover letter and email</li>
+      <li>Writing the self-introductions</li>
+    </ol>
+    <div class="progress-foot"><span id="elapsed">0:00</span><span class="muted">Usually 40–90 seconds</span></div>
+  </div>
+</div>
+<div class="toast" id="toast" role="alert" hidden></div>
+
+<script src="/app.js"></script>
+<script src="/interview.js"></script>
+</body>
+</html>

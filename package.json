@@ -1,0 +1,23 @@
+{
+  "name": "jd-resume-tailor",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Tailor any resume to any job description: ATS resume, cover letter, email and self-introduction as Word files.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "demo": "MOCK_AI=1 node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "docx": "8.5.0",
+    "dotenv": "16.4.5",
+    "express": "4.21.2",
+    "jszip": "3.10.1",
+    "mammoth": "1.8.0",
+    "multer": "2.0.2",
+    "pdf-parse": "1.1.1"
+  }
+}
