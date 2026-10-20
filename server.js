@@ -15,9 +15,10 @@ const interview = require('./lib/interview');
 
 const PORT = Number(process.env.PORT) || 3020;
 const HOST = process.env.HOST || '0.0.0.0';
-const HISTORY_DIR = path.join(__dirname, 'data', 'history');
+const DATA_DIR = process.env.VERCEL ? path.join(os.tmpdir(), 'resume-tailor') : path.join(__dirname, 'data');
+const HISTORY_DIR = path.join(DATA_DIR, 'history');
 fs.mkdirSync(HISTORY_DIR, { recursive: true });
-const AUDIO_DIR = path.join(__dirname, 'data', 'audio');
+const AUDIO_DIR = path.join(DATA_DIR, 'audio');
 fs.mkdirSync(AUDIO_DIR, { recursive: true });
 
 const app = express();
