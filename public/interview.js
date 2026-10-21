@@ -406,14 +406,25 @@ async function finishInterview() {
   if (pending) { const w = words(pending); iv.transcript.push({ role: 'candidate', text: pending, seconds: 0, words: w, wpm: 0, fillers: countFillers(pending) }); }
   const blob = await stopRecording();
   const durationSec = (Date.now() - iv.started) / 1000;
-  const payload = { settings: iv.settings, transcript: iv.transcript, durationSec };
+  const payload = { settings: iv.settings, transcript: iv.transcript, durationSec, audioType: blob && blob.size > 1000 ? (blob.type || 'audio/webm') : '' };
   showFinishing();
   try {
     const session = await api(`/api/history/${state.record.id}/interview/evaluate`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) });
-    if (blob && blob.size > 1000) {
-      try { const up = await fetch(`/api/history/${state.record.id}/practice/${session.id}/audio`, { method: 'POST', headers: { 'content-type': blob.type || 'audio/webm' }, body: blob }); if (up.ok) session.audio = (await up.json()).file; }
-      catch { toast('Report saved, but the audio recording could not be uploaded.', 'error'); }
+    if (payload.audioType && session.upload) {
+      try {
+        const up = session.upload;
+        if (up.mode === 'signed') {
+          const r1 = await fetch(up.url, { method: 'PUT', headers: { 'content-type': blob.type || 'audio/webm', 'x-upsert': 'true' }, body: blob });
+          if (!r1.ok) throw new Error('upload');
+          await api(`/api/history/${state.record.id}/practice/${session.id}/audio`, { method: 'PUT', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ key: up.key }) });
+          session.audio = up.key;
+        } else {
+          const r2 = await fetch(up.url, { method: 'POST', headers: { 'content-type': blob.type || 'audio/webm' }, body: blob });
+          if (r2.ok) session.audio = (await r2.json()).file;
+        }
+      } catch { toast('Report saved, but the audio recording could not be uploaded.', 'error'); }
     }
+    delete session.upload;
     state.record.practice = [...(state.record.practice || []), session];
     cleanupMedia(); iv = null; viewSession = session;
     toast('Interview report ready.', 'success');

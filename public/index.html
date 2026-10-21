@@ -10,27 +10,89 @@
 <link rel="stylesheet" href="/app.css">
 </head>
 <body>
-<div class="shell">
+<!-- AUTH -->
+<div class="auth" id="authScreen" hidden>
+  <section class="auth-brand">
+    <div class="brand light"><div class="mark">RT</div><div><div class="brand-name">JD Resume Tailor</div><div class="brand-sub">Application studio</div></div></div>
+    <div class="auth-pitch">
+      <h1>Every application, tailored. Every interview, rehearsed.</h1>
+      <p>Upload your resume, paste a job description, and walk away with an ATS-ready resume, a cover letter and a practised interview.</p>
+      <ul class="auth-points">
+        <li><span class="ap-ico"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4M5 4h10l4 4v12H5z"/></svg></span><div><b>ATS resume &amp; cover letter</b><span>Matched to each JD, downloadable as Word</span></div></li>
+        <li><span class="ap-ico"><svg viewBox="0 0 24 24"><path d="M8 10h8M8 14h5M4 5h16v11H9l-5 4z"/></svg></span><div><b>Likely interview questions</b><span>With model answers built from your experience</span></div></li>
+        <li><span class="ap-ico"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></span><div><b>Voice mock interviews</b><span>Scored on language, knowledge and confidence</span></div></li>
+      </ul>
+    </div>
+    <p class="auth-foot">Your documents are private to your account.</p>
+  </section>
+  <section class="auth-panel">
+    <div class="auth-card">
+      <div class="auth-tabs" role="tablist">
+        <button role="tab" id="tabSignin" aria-selected="true">Sign in</button>
+        <button role="tab" id="tabSignup" aria-selected="false">Create account</button>
+      </div>
+      <form id="signinForm" novalidate>
+        <h2>Welcome back</h2>
+        <p class="muted">Sign in with your email address or mobile number.</p>
+        <div class="field"><label for="siLogin">Email or mobile number</label><input id="siLogin" type="text" autocomplete="username" placeholder="name@gmail.com or +91 98765 43210"></div>
+        <div class="field"><label for="siPassword">Password</label><div class="pw"><input id="siPassword" type="password" autocomplete="current-password"><button type="button" class="pw-toggle" data-for="siPassword">Show</button></div></div>
+        <div class="form-err" id="siErr" role="alert"></div>
+        <button class="btn btn-primary btn-block" type="submit" id="siBtn">Sign in</button>
+        <p class="muted small center">New here? <button type="button" class="link" id="goSignup">Create an account</button></p>
+      </form>
+      <form id="signupForm" novalidate hidden>
+        <h2>Create your account</h2>
+        <p class="muted">Email and mobile number are required.</p>
+        <div class="field"><label for="suName">Full name</label><input id="suName" type="text" autocomplete="name" placeholder="Muhammed Shajeer K S"></div>
+        <div class="field"><label for="suEmail">Email address <span class="req">*</span></label><input id="suEmail" type="email" autocomplete="email" placeholder="name@gmail.com"></div>
+        <div class="field"><label for="suMobile">Mobile number <span class="req">*</span></label><input id="suMobile" type="tel" autocomplete="tel" placeholder="+91 98765 43210"><div class="hint">Include the country code for numbers outside India.</div></div>
+        <div class="field"><label for="suPassword">Password</label><div class="pw"><input id="suPassword" type="password" autocomplete="new-password"><button type="button" class="pw-toggle" data-for="suPassword">Show</button></div><div class="hint">At least 8 characters with a letter and a number.</div></div>
+        <div class="form-err" id="suErr" role="alert"></div>
+        <button class="btn btn-primary btn-block" type="submit" id="suBtn">Create account</button>
+        <p class="muted small center">Already registered? <button type="button" class="link" id="goSignin">Sign in</button></p>
+      </form>
+    </div>
+  </section>
+</div>
+
+<div class="shell" id="appShell" hidden>
   <aside class="sidebar">
     <div class="brand">
       <div class="mark">RT</div>
       <div><div class="brand-name">JD Resume Tailor</div><div class="brand-sub">Application studio</div></div>
     </div>
     <nav>
+      <div class="nav-label">Workspace</div>
+      <a href="#home" data-view="home" class="nav-item">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 9l7-6 7 6v8H3z M8 17v-5h4v5"/></svg>Dashboard</a>
       <a href="#new" data-view="new" class="nav-item">
         <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 4v12M4 10h12" /></svg>New application</a>
       <a href="#history" data-view="history" class="nav-item">
-        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h9" /></svg>History</a>
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h9" /></svg>Applications</a>
+      <div class="nav-label">Account</div>
       <a href="#settings" data-view="settings" class="nav-item">
-        <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="2.6"/><path d="M10 2.5v2.2M10 15.3v2.2M17.5 10h-2.2M4.7 10H2.5M15.3 4.7l-1.6 1.6M6.3 13.7l-1.6 1.6M15.3 15.3l-1.6-1.6M6.3 6.3L4.7 4.7"/></svg>Settings</a>
+        <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="2.6"/><path d="M10 2.5v2.2M10 15.3v2.2M17.5 10h-2.2M4.7 10H2.5M15.3 4.7l-1.6 1.6M6.3 13.7l-1.6 1.6M15.3 15.3l-1.6-1.6M6.3 6.3L4.7 4.7"/></svg>AI settings</a>
+      <a href="#account" data-view="account" class="nav-item">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="7" r="3.2"/><path d="M3.5 17c1.2-3 3.6-4.5 6.5-4.5s5.3 1.5 6.5 4.5"/></svg>My account</a>
     </nav>
     <div class="side-foot">
       <div class="status-pill" id="statusPill"><span class="dot"></span><span id="statusText">Checking…</span></div>
-      <p>Files and history stay on this computer.</p>
+      <div class="user-chip"><div class="avatar sm" id="userInitials">–</div><div class="uc-text"><b id="userName"></b><span id="userEmail"></span></div>
+        <button class="icon-btn" id="signOut" title="Sign out" aria-label="Sign out"><svg viewBox="0 0 20 20"><path d="M8 4H4v12h4M12 6l4 4-4 4M16 10H8"/></svg></button></div>
     </div>
   </aside>
 
   <main class="main">
+    <!-- DASHBOARD -->
+    <section class="view" id="view-home" hidden>
+      <header class="page-head">
+        <div><div class="eyebrow" id="homeDate"></div><h1 id="homeHello">Welcome</h1>
+          <p class="lede">Track your applications, interview readiness and next steps in one place.</p></div>
+        <div class="head-actions"><a class="btn btn-primary" href="#new">New application</a></div>
+      </header>
+      <div id="homeBody"></div>
+    </section>
+
     <!-- NEW APPLICATION -->
     <section class="view" id="view-new">
       <header class="page-head">
@@ -43,7 +105,7 @@
 
       <div id="setupNotice" class="notice" hidden>
         <div id="setupText"></div>
-        <a class="btn btn-secondary" href="#settings">Open Settings</a>
+        <a class="btn btn-secondary" href="#settings">Open AI settings</a>
       </div>
 
       <div class="form-grid">
@@ -53,7 +115,7 @@
             <input type="file" id="fileInput" accept=".docx,.pdf,.txt,.md">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0l-4 4m4-4l4 4M5 16v3h14v-3"/></svg>
             <span class="dz-title">Upload resume</span>
-            <span class="dz-sub">Drag a file here or click to browse · .docx, .pdf or .txt · up to 10 MB</span>
+            <span class="dz-sub">Drag a file here or click to browse · .docx, .pdf or .txt · up to 4 MB</span>
           </label>
           <div class="file-chip" id="fileChip" hidden>
             <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 2.5h6.5L15 6v11.5H5z M11.5 2.5V6H15"/></svg>
@@ -134,7 +196,7 @@
     <!-- HISTORY -->
     <section class="view" id="view-history" hidden>
       <header class="page-head">
-        <div><div class="eyebrow">History</div><h1>Saved applications</h1>
+        <div><div class="eyebrow">Applications</div><h1>Your applications</h1>
           <p class="lede">Every generated application is saved here so you can download it again.</p></div>
         <div class="head-actions"><a class="btn btn-primary" href="#new">New application</a></div>
       </header>
@@ -144,8 +206,8 @@
     <!-- SETTINGS -->
     <section class="view" id="view-settings" hidden>
       <header class="page-head">
-        <div><div class="eyebrow">Settings</div><h1>AI connection</h1>
-          <p class="lede">Choose which AI writes your documents. Keys are stored only in the <code>.env</code> file on this computer.</p></div>
+        <div><div class="eyebrow">AI settings</div><h1>AI connection</h1>
+          <p class="lede">Choose which AI writes your documents. Your keys are encrypted and used only for your account.</p></div>
       </header>
       <div class="provider-grid" role="radiogroup" aria-label="AI provider">
         <button type="button" class="provider" data-provider="demo" role="radio">
@@ -157,7 +219,7 @@
         <button type="button" class="provider" data-provider="anthropic" role="radio">
           <span class="p-top"><span class="p-name">Anthropic Claude</span><span class="tag paid">Paid</span></span>
           <span class="p-desc">Highest writing quality. About ₹5–12 per application.</span></button>
-        <button type="button" class="provider" data-provider="ollama" role="radio">
+        <button type="button" class="provider" data-provider="ollama" role="radio" id="ollamaCard">
           <span class="p-top"><span class="p-name">Ollama</span><span class="tag free">Free · offline</span></span>
           <span class="p-desc">Runs an AI model on this Mac. Private, slower, lower quality.</span></button>
       </div>
@@ -181,6 +243,39 @@
         <div class="card soft" id="providerHelp"></div>
       </div>
     </section>
+    <!-- ACCOUNT -->
+    <section class="view" id="view-account" hidden>
+      <header class="page-head">
+        <div><div class="eyebrow">My account</div><h1>Profile &amp; security</h1>
+          <p class="lede">Your contact details and sign-in settings.</p></div>
+      </header>
+      <div class="settings-grid">
+        <form class="card" id="profileForm" novalidate>
+          <div class="card-head"><h2>Profile</h2></div>
+          <div class="field"><label for="pfName">Full name</label><input id="pfName" type="text" autocomplete="name"></div>
+          <div class="field"><label for="pfEmail">Email address <span class="req">*</span></label><input id="pfEmail" type="email" autocomplete="email"></div>
+          <div class="field"><label for="pfMobile">Mobile number <span class="req">*</span></label><input id="pfMobile" type="tel" autocomplete="tel"></div>
+          <div class="form-err" id="pfErr" role="alert"></div>
+          <div class="row-actions"><button class="btn btn-primary" type="submit">Save changes</button><span class="muted small" id="pfMeta"></span></div>
+        </form>
+        <div class="stack">
+          <form class="card" id="pwForm" novalidate>
+            <div class="card-head"><h2>Change password</h2></div>
+            <div class="field"><label for="pwCurrent">Current password</label><input id="pwCurrent" type="password" autocomplete="current-password"></div>
+            <div class="field"><label for="pwNew">New password</label><input id="pwNew" type="password" autocomplete="new-password"><div class="hint">At least 8 characters with a letter and a number. Other devices will be signed out.</div></div>
+            <div class="form-err" id="pwErr" role="alert"></div>
+            <div class="row-actions"><button class="btn btn-secondary" type="submit">Update password</button></div>
+          </form>
+          <form class="card danger-card" id="delForm" novalidate>
+            <div class="card-head"><h2>Delete account</h2></div>
+            <p class="muted small">Permanently deletes your account, all applications, interview reports and recordings. This cannot be undone.</p>
+            <div class="field"><label for="delPw">Confirm with your password</label><input id="delPw" type="password" autocomplete="current-password"></div>
+            <div class="form-err" id="delErr" role="alert"></div>
+            <div class="row-actions"><button class="btn btn-danger" type="submit">Delete my account</button></div>
+          </form>
+        </div>
+      </div>
+    </section>
   </main>
 </div>
 
@@ -202,5 +297,6 @@
 
 <script src="/app.js"></script>
 <script src="/interview.js"></script>
+<script src="/account.js"></script>
 </body>
 </html>

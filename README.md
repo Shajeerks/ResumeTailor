@@ -11,7 +11,9 @@ Upload a resume, paste a job description and get:
 - **Interview Q&A**: 18–22 likely questions with model answers from your own resume, what each question tests, key points, mistakes to avoid, questions to ask the interviewer and topics to revise. Tick questions as prepared; download as Word.
 - **Interview practice**: a voice mock interview with an AI interviewer (HR, hiring manager, technical, behavioural or mixed; friendly, realistic or tough; coach or real mode). Your audio is recorded, and you get a scored report: communication, language and grammar, domain knowledge, relevance, structure, confidence, conciseness, speaking pace and filler words, question-by-question feedback with stronger answers, and next steps. A readiness score and trend chart track your progress.
 
-Runs on your own computer at **http://localhost:3020** (ports 3000 and 3010 are left free for your other apps).
+Every user signs in with their own account (email and mobile number are mandatory) and sees only their own applications, interview reports and recordings. Each user adds their own AI key in **AI settings**; keys are encrypted.
+
+Runs on your own computer at **http://localhost:3020** (ports 3000 and 3010 are left free for your other apps), or online on **Vercel** with a free **Supabase** database (see "Put it online" below).
 
 ## First-time setup (Mac)
 
@@ -22,10 +24,11 @@ Runs on your own computer at **http://localhost:3020** (ports 3000 and 3010 are 
    cd ~/HIS/HIS-upload/jd-resume-tailor
    npm start
    ```
-4. Open http://localhost:3020. The app starts in **Demo mode** (free sample answers).
-5. For real output, go to **Settings** and pick an AI (see below).
+4. Open http://localhost:3020 and **Create account** (name, email, mobile number, password).
+   The first account created on this computer takes over the applications and AI keys saved before sign-in was added.
+5. New accounts start in **Demo mode** (free sample answers). For real output, open **AI settings** and pick an AI (see below).
 
-## Choosing the AI (Settings page)
+## Choosing the AI (AI settings page)
 
 | Option | Cost | Use it for |
 |---|---|---|
@@ -60,33 +63,52 @@ Forces demo mode regardless of Settings (useful for showing the app without usin
 - On other devices (http://192.168…:3020) browsers block the microphone, so friends type their answers there.
 - Recordings are saved in `data/audio/`. Delete a session from the Practice sessions list to remove its recording.
 
+## Put it online (Vercel + Supabase, free)
+
+Vercel cannot keep files, so the online version stores accounts, applications and recordings in Supabase.
+
+1. **Supabase:** sign up at supabase.com > New project (any name, choose a strong database password, region Mumbai/Singapore).
+2. In the project: **SQL Editor > New query**, paste everything from `supabase/schema.sql`, press **Run**.
+3. **Project Settings > API**: copy the **Project URL** and the **service_role** secret key.
+4. **Vercel > your project > Settings > Environment Variables**, add (for Production, Preview and Development):
+   - `SUPABASE_URL` = the Project URL
+   - `SUPABASE_SERVICE_ROLE_KEY` = the service_role key
+   - `APP_SECRET` = a long random value. Create one in Terminal with `openssl rand -hex 32`
+5. **Vercel > Settings > General > Framework Preset**: `Other` (no build command, output directory empty).
+6. Push to GitHub (`git push`), or press **Redeploy** in Vercel. Open your site and create an account.
+
+Never put the service_role key or APP_SECRET in the code or share them; they belong only in Vercel's environment variables.
+On the online version Ollama is hidden (it only works on your own computer), and speech-to-text works because the site uses https.
+
 ## Letting friends use it
 
+- **Online:** share your Vercel address. Each friend creates an account and adds their own Gemini (free) or Claude key.
 - **Same Wi-Fi / office network:** start the app and share the "On your Wi-Fi/LAN" address printed in Terminal (for example http://192.168.1.20:3020). Your Mac must stay on and awake.
-- Their generations use your selected AI and key, and appear in your History. Delete them from History when done.
-- To keep it private to your Mac only, set `HOST=127.0.0.1` in `.env`.
+- To keep the local app private to your Mac only, set `HOST=127.0.0.1` in `.env`.
 
 ## Settings file (.env)
 
 | Setting | Meaning |
 |---|---|
-| AI_PROVIDER | demo, gemini, anthropic or ollama (set by the Settings page) |
-| GEMINI_API_KEY / GEMINI_MODEL | Free Google Gemini key and model |
-| ANTHROPIC_API_KEY / CLAUDE_MODEL | Paid Anthropic key and model |
-| OLLAMA_URL / OLLAMA_MODEL | Local Ollama address and model |
+| APP_SECRET | Signs sign-in sessions and encrypts saved API keys. Created automatically on your Mac; set it yourself on Vercel |
+| SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY | Optional on your Mac. When set, data is stored in Supabase instead of `data/` |
+| GEMINI_API_KEY, ANTHROPIC_API_KEY, … | Old single-user keys. Imported once into the first account, then managed per user in AI settings |
 | PORT | Default 3020. Change it if that port is busy |
 | HOST | 0.0.0.0 = available on your network, 127.0.0.1 = this Mac only |
 
 ## Where things are stored
 
-- Generated applications, interview questions and practice reports: `data/history/` (one file each). Delete them from the History page.
-- Interview audio recordings: `data/audio/`.
-- API key: `.env` in this folder. Never share this file.
+- On your Mac: accounts in `data/users.json` (passwords hashed, API keys encrypted), applications and reports in `data/history/`, recordings in `data/audio/`.
+- Online: Supabase tables `users` and `applications`, recordings in the private `audio` storage bucket.
+- `APP_SECRET` is in `.env` on your Mac. Never share this file. If it is lost, saved API keys must be entered again.
 
 ## Troubleshooting
 
 | Message | Fix |
 |---|---|
+| Database not configured (online) | Add the Supabase variables in Vercel (see above) and redeploy |
+| Database tables are missing | Run `supabase/schema.sql` in the Supabase SQL editor |
+| Forgot password | Not available yet without an email service. On your Mac, delete the user from `data/users.json`; online, delete the row in Supabase > Table editor > users |
 | Port 3020 is already in use | Add `PORT=3030` to `.env` and start again |
 | Your API key was rejected | Create a new key (aistudio.google.com or console.anthropic.com) and save it in Settings |
 | Gemini free-tier limit reached | Wait a minute, or until the next day for the daily limit |

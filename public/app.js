@@ -11,7 +11,11 @@ const state = { status: null, record: null, tab: 'overview' };
 async function api(url, opts = {}) {
   const r = await fetch(url, opts);
   const body = await r.json().catch(() => ({}));
-  if (!r.ok) { const e = new Error(body.error || `Request failed (${r.status})`); e.status = r.status; throw e; }
+  if (!r.ok) {
+    const e = new Error(body.error || `Request failed (${r.status})`); e.status = r.status; e.field = body.field;
+    if (r.status === 401 && !url.startsWith('/api/auth/') && typeof showAuth === 'function') showAuth();
+    throw e;
+  }
   return body;
 }
 
@@ -23,14 +27,17 @@ function toast(msg, kind = '') {
 
 // ---------- routing ----------
 function route() {
-  const hash = location.hash.replace('#', '') || 'new';
+  if (!state.user) return;
+  const hash = location.hash.replace('#', '') || 'home';
   const [view, id] = hash.split('/');
   $$('.view').forEach(v => { v.hidden = true; });
   $$('.nav-item').forEach(a => a.classList.toggle('active', a.dataset.view === (view === 'result' ? 'history' : view)));
   if (view === 'result' && id) { $('#view-result').hidden = false; state.tab = 'overview'; openRecord(id); }
   else if (view === 'history') { $('#view-history').hidden = false; loadHistory(); }
   else if (view === 'settings') { $('#view-settings').hidden = false; loadSettings(); }
-  else { $('#view-new').hidden = false; }
+  else if (view === 'account') { $('#view-account').hidden = false; loadAccount(); }
+  else if (view === 'new') { $('#view-new').hidden = false; }
+  else { $('#view-home').hidden = false; loadHome(); }
   window.scrollTo(0, 0);
 }
 window.addEventListener('hashchange', route);
@@ -325,6 +332,7 @@ let selProvider = 'demo';
 
 async function loadSettings() {
   await loadStatus();
+  $('#ollamaCard').hidden = !((state.status || {}).providersAllowed || []).includes('ollama');
   selectProvider((state.status || {}).provider || 'demo');
 }
 
@@ -383,7 +391,8 @@ $('#saveKey').onclick = async () => {
 const PNAMES = { demo: 'Demo mode (sample)', gemini: 'Google Gemini (free)', anthropic: 'Anthropic Claude', ollama: 'Ollama (offline)' };
 function savedProviders() {
   const ps = (state.status || {}).providers || {};
-  return ['demo', 'gemini', 'anthropic', 'ollama'].filter(p => p === 'demo' || (p === 'ollama' ? ps.ollama?.model : ps[p]?.keyHint));
+  const allowed = (state.status || {}).providersAllowed || ['demo', 'gemini', 'anthropic', 'ollama'];
+  return allowed.filter(p => p === 'demo' || (p === 'ollama' ? ps.ollama?.model : ps[p]?.keyHint));
 }
 function fillQuick() {
   const sel = $('#providerQuick'), s = state.status || {};
@@ -404,4 +413,4 @@ $('#providerQuick').addEventListener('change', async e => {
 });
 
 // ---------- start ----------
-loadStatus().then(route);
+// boot() runs from account.js once all scripts are loaded
