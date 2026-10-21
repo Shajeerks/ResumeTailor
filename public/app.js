@@ -334,6 +334,7 @@ let selProvider = 'demo';
 async function loadSettings() {
   await loadStatus();
   $('#ollamaCard').hidden = !((state.status || {}).providersAllowed || []).includes('ollama');
+  if (typeof paintJobKey === 'function') paintJobKey();
   selectProvider((state.status || {}).provider || 'demo');
 }
 

@@ -76,8 +76,9 @@ $('#jfForm').onsubmit = async e => {
 // ---------- main column ----------
 function renderJobsMain() {
   const s = state.status || {}, p = jfState.profile, last = jfState.last;
-  const canSearch = ['gemini', 'anthropic', 'demo'].includes(s.provider) && s.configured;
-  const aiLine = s.provider === 'gemini' ? 'Google Gemini with Google Search (free tier)' : s.provider === 'anthropic' ? 'Claude with web search (about US$0.01 per search, plus usage)'
+  const js = s.jobsearch;
+  const canSearch = !!js || (['gemini', 'anthropic', 'demo'].includes(s.provider) && s.configured);
+  const aiLine = js ? `Separate Job finder key: ${js.provider === 'gemini' ? 'Google Gemini with Google Search' : 'Claude with web search'} (${js.keyHint})` : s.provider === 'gemini' ? 'Google Gemini with Google Search (free tier)' : s.provider === 'anthropic' ? 'Claude with web search (about US$0.01 per search, plus usage)'
     : s.provider === 'demo' ? 'Demo mode: sample results only' : 'This AI cannot search the web';
   const ready = p && (p.resumeText || '').length >= 150;
   $('#jfMain').innerHTML = `
@@ -211,3 +212,26 @@ async function tailorFor(job, fromSaved) {
     try { jfState.saved = (await api('/api/jobs/saved', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ...job, status: 'saved' }) })).saved; } catch { /* already saved */ }
   }
 }
+
+// ---------- separate Job finder key (AI settings page) ----------
+function paintJobKey() {
+  const js = (state.status || {}).jobsearch;
+  $('#jsActive').hidden = !js; $('#jsRemove').hidden = !js; $('#jsMsg').innerHTML = ''; $('#jsKey').value = '';
+  if (js) $('#jsProvider').value = js.provider;
+  $('#jsHint').textContent = js ? `Saved ${js.provider === 'gemini' ? 'Gemini' : 'Claude'} key ${js.keyHint} · model ${js.model}. Leave the box empty to keep it.` : 'Not set: Job finder uses the main AI above.';
+}
+$('#jsSave').onclick = async () => {
+  const btn = $('#jsSave'); btn.disabled = true; $('#jsMsg').innerHTML = '<span class="muted">Testing the key…</span>';
+  try {
+    const r = await api('/api/settings/jobsearch', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ provider: $('#jsProvider').value, apiKey: $('#jsKey').value }) });
+    await loadStatus(); paintJobKey();
+    $('#jsMsg').innerHTML = `<span class="ok-text">Saved. Job finder now uses this key (${esc(r.model)}).</span>`;
+  } catch (e) { $('#jsMsg').innerHTML = `<span class="err-text">${esc(e.message)}</span>`; }
+  finally { btn.disabled = false; }
+};
+$('#jsRemove').onclick = async () => {
+  const b = $('#jsRemove');
+  if (b.dataset.c !== '1') { b.dataset.c = '1'; b.textContent = 'Confirm remove'; setTimeout(() => { b.dataset.c = ''; b.textContent = 'Remove'; }, 4000); return; }
+  try { await api('/api/settings/jobsearch', { method: 'DELETE' }); await loadStatus(); paintJobKey(); toast('Job finder key removed.'); }
+  catch (e) { toast(e.message, 'error'); }
+};
