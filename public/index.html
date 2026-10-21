@@ -287,10 +287,16 @@
       </div>
       <div class="card js-card" id="jsCard">
         <div class="card-head"><h2>Separate key for Job finder <span class="muted small">(optional)</span></h2><span class="tag active-tag push" id="jsActive" hidden>In use for job search</span></div>
-        <p class="muted small">Job searches use Google Search and can hit Gemini's free daily limit quickly. Add a second key here and Job finder will use it, while resumes and interviews keep using the key above. Note: a Gemini app subscription (Gemini Pro / Google One AI) does not raise API limits. To raise them, turn on billing for the key's project in Google AI Studio.</p>
+        <p class="muted small"><b>Free option, recommended:</b> choose <b>JSearch</b> to get real, live postings from LinkedIn, Indeed, Naukri, Glassdoor and company career sites (via Google for Jobs). Your AI key above then scores each posting against your resume. JSearch's free Basic plan gives 200 requests a month, and one search uses 1–4 requests.</p>
+        <details class="js-help"><summary>How to get a free JSearch key (2 minutes)</summary><ol class="list">
+          <li>Go to <b>rapidapi.com</b> and sign up (Google sign-in works, no card needed).</li>
+          <li>Search for <b>JSearch</b> (by OpenWeb Ninja) and open it.</li>
+          <li>Open <b>Pricing</b> and subscribe to the <b>Basic</b> plan ($0).</li>
+          <li>Open <b>Endpoints</b>, copy the <b>X-RapidAPI-Key</b> value and paste it below.</li></ol></details>
+        <p class="muted small">Or use a Gemini key whose project has billing turned on, or a Claude key. A Gemini app subscription (Gemini Pro) does not raise API limits.</p>
         <div class="js-row">
-          <div class="field"><label for="jsProvider">Search with</label><select id="jsProvider"><option value="gemini">Google Gemini (Google Search)</option><option value="anthropic">Anthropic Claude (web search)</option></select></div>
-          <div class="field"><label for="jsKey">API key</label><input id="jsKey" type="password" autocomplete="off" placeholder="AIza… / AQ.… / sk-ant-…"></div>
+          <div class="field"><label for="jsProvider">Search with</label><select id="jsProvider"><option value="jsearch">JSearch: LinkedIn, Indeed, Naukri listings (free)</option><option value="gemini">Google Gemini (Google Search)</option><option value="anthropic">Anthropic Claude (web search)</option></select></div>
+          <div class="field"><label for="jsKey">API key</label><input id="jsKey" type="password" autocomplete="off" placeholder="RapidAPI key / AIza… / sk-ant-…"></div>
         </div>
         <div class="muted small" id="jsHint"></div>
         <div class="row-actions"><button class="btn btn-primary" id="jsSave" type="button">Test &amp; save</button><button class="btn btn-secondary" id="jsRemove" type="button" hidden>Remove</button><span class="small" id="jsMsg"></span></div>

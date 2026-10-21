@@ -78,7 +78,8 @@ function renderJobsMain() {
   const s = state.status || {}, p = jfState.profile, last = jfState.last;
   const js = s.jobsearch;
   const canSearch = !!js || (['gemini', 'anthropic', 'demo'].includes(s.provider) && s.configured);
-  const aiLine = js ? `Separate Job finder key: ${js.provider === 'gemini' ? 'Google Gemini with Google Search' : 'Claude with web search'} (${js.keyHint})` : s.provider === 'gemini' ? 'Google Gemini with Google Search (free tier)' : s.provider === 'anthropic' ? 'Claude with web search (about US$0.01 per search, plus usage)'
+  const scorerName = s.configured ? ({ gemini: 'Gemini', anthropic: 'Claude', ollama: 'Ollama' }[s.provider] || '') : '';
+  const aiLine = js ? (js.provider === 'jsearch' ? `JSearch live listings (LinkedIn, Indeed, Naukri…)${scorerName ? ', scored by ' + scorerName : ', keyword scoring'}` : `Separate Job finder key: ${js.provider === 'gemini' ? 'Google Gemini with Google Search' : 'Claude with web search'} (${js.keyHint})`) : s.provider === 'gemini' ? 'Google Gemini with Google Search (free tier)' : s.provider === 'anthropic' ? 'Claude with web search (about US$0.01 per search, plus usage)'
     : s.provider === 'demo' ? 'Demo mode: sample results only' : 'This AI cannot search the web';
   const ready = p && (p.resumeText || '').length >= 150;
   $('#jfMain').innerHTML = `
@@ -117,7 +118,7 @@ function renderResults(last) {
       <div><b>${last.jobs.length} matching jobs</b> <span class="muted small">· ${esc(new Date(last.at).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' }))}</span></div>
       ${last.summary ? `<p class="muted">${esc(last.summary)}</p>` : ''}
       ${last.keywords.length ? `<div class="chips">${last.keywords.map(k => `<span class="chip kw">${esc(k)}</span>`).join('')}</div>` : ''}
-      <p class="small muted">Always open the posting to confirm it is still open. Links marked <span class="vlink ok">Found in search</span> came from pages the AI actually searched; others may be outdated.</p>
+      ${last.provider === 'jsearch' ? `<p class="small muted">Live postings from JSearch${last.queries.length ? ' for: ' + last.queries.map(esc).join(' · ') : ''}. ${last.scoredBy === 'keywords' ? 'Scored by keyword overlap (set up Gemini or Claude in AI settings for smarter scoring).' : 'Match scores by your AI.'}</p>` : '<p class="small muted">Always open the posting to confirm it is still open. Links marked <span class="vlink ok">Found in search</span> came from pages the AI actually searched; others may be outdated.</p>'}
     </div>
     <div class="job-list">${last.jobs.map(j => {
       const isSaved = savedKeys.has((j.title + '|' + j.company).toLowerCase());
@@ -136,7 +137,8 @@ function renderResults(last) {
             <a class="btn btn-secondary btn-sm" href="${esc(j.searchUrl)}" target="_blank" rel="noopener">Search this job</a>
             <button class="btn btn-secondary btn-sm" data-save="${esc(j.id)}" ${isSaved ? 'disabled' : ''}>${isSaved ? 'Saved' : 'Save'}</button>
             <button class="btn btn-primary btn-sm" data-tailor="${esc(j.id)}">Tailor my resume</button>
-            ${j.url ? `<span class="vlink ${j.verified ? 'ok' : 'warn'}">${j.verified ? 'Found in search' : 'Link not confirmed'}</span>` : '<span class="vlink warn">No direct link found</span>'}
+            ${j.url ? `<span class="vlink ${j.verified ? 'ok' : 'warn'}">${last.provider === 'jsearch' ? 'Live listing' : j.verified ? 'Found in search' : 'Link not confirmed'}</span>` : '<span class="vlink warn">No direct link found</span>'}
+          ${j.note ? `<span class="muted small">${esc(j.note)}</span>` : ''}
           </div>
         </div></article>`;
     }).join('') || '<div class="card empty-state"><h3>No matching postings found</h3><p>Try wider locations, more role titles or a longer "posted within" period, or use the job-site links below.</p></div>'}</div>
@@ -227,7 +229,8 @@ function paintJobKey() {
   const js = (state.status || {}).jobsearch;
   $('#jsActive').hidden = !js; $('#jsRemove').hidden = !js; $('#jsMsg').innerHTML = ''; $('#jsKey').value = '';
   if (js) $('#jsProvider').value = js.provider;
-  $('#jsHint').textContent = js ? `Saved ${js.provider === 'gemini' ? 'Gemini' : 'Claude'} key ${js.keyHint} · model ${js.model}. Leave the box empty to keep it.` : 'Not set: Job finder uses the main AI above.';
+  const nm = { gemini: 'Gemini', anthropic: 'Claude', jsearch: 'JSearch' };
+  $('#jsHint').textContent = js ? `Saved ${nm[js.provider]} key ${js.keyHint}${js.provider === 'jsearch' ? '' : ' · model ' + js.model}. Leave the box empty to keep it.` : 'Not set: Job finder uses the main AI above.';
 }
 $('#jsSave').onclick = async () => {
   const btn = $('#jsSave'); btn.disabled = true; $('#jsMsg').innerHTML = '<span class="muted">Testing the key…</span>';

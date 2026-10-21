@@ -535,3 +535,7 @@ input.invalid, input.invalid:focus { border-color: var(--bad); box-shadow: 0 0 0
 .limited-card{border-left:4px solid #c8811a;display:grid;gap:10px}
 .limited-card h3{margin:0}
 .limited-card code{background:var(--bg-soft,#f3f4f6);padding:2px 6px;border-radius:4px;font-size:12px;word-break:break-word}
+
+.js-help{margin:4px 0 10px;font-size:13px}
+.js-help summary{cursor:pointer;color:var(--accent,#1d4ed8);font-weight:600}
+.js-help ol{margin:8px 0 0 18px}
