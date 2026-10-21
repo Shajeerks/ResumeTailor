@@ -1,4 +1,17 @@
 {
-  "rewrites": [{ "source": "/api/(.*)", "destination": "/api/index" }],
-  "functions": { "api/index.js": { "maxDuration": 300, "includeFiles": "lib/**" } }
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/index"
+    }
+  ],
+  "functions": {
+    "api/index.js": {
+      "maxDuration": 300,
+      "includeFiles": "lib/**"
+    }
+  },
+  "regions": [
+    "bom1"
+  ]
 }
