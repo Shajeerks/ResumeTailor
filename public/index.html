@@ -67,6 +67,8 @@
         <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 9l7-6 7 6v8H3z M8 17v-5h4v5"/></svg>Dashboard</a>
       <a href="#new" data-view="new" class="nav-item">
         <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 4v12M4 10h12" /></svg>New application</a>
+      <a href="#jobs" data-view="jobs" class="nav-item">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><rect x="3" y="6" width="14" height="10" rx="2"/><path d="M7.5 6V4.5h5V6M3 10.5h14"/></svg>Job finder</a>
       <a href="#history" data-view="history" class="nav-item">
         <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h9" /></svg>Applications</a>
       <div class="nav-label">Account</div>
@@ -91,6 +93,47 @@
         <div class="head-actions"><a class="btn btn-primary" href="#new">New application</a></div>
       </header>
       <div id="homeBody"></div>
+    </section>
+
+    <!-- JOB FINDER -->
+    <section class="view" id="view-jobs" hidden>
+      <header class="page-head">
+        <div><div class="eyebrow">Job finder</div><h1>Find jobs that match your resume</h1>
+          <p class="lede">Save your profile links and resume once. The AI searches LinkedIn, Naukri, Indeed and company career pages for current openings and scores how well each one fits you.</p></div>
+      </header>
+      <div class="jobs-grid">
+        <form class="card jf-profile" id="jfForm" novalidate>
+          <div class="card-head"><h2>Your job profile</h2></div>
+          <div class="sec-title">Profile links</div>
+          <div class="field"><label for="jfLinkedin">LinkedIn</label><input id="jfLinkedin" type="text" placeholder="https://www.linkedin.com/in/your-name"></div>
+          <div class="field"><label for="jfNaukri">Naukri</label><input id="jfNaukri" type="text" placeholder="https://www.naukri.com/mnjuser/profile…"></div>
+          <div class="field"><label for="jfIndeed">Indeed</label><input id="jfIndeed" type="text" placeholder="https://profile.indeed.com/…"></div>
+          <div class="field"><label for="jfOther">Portfolio / other</label><input id="jfOther" type="text" placeholder="https://…"></div>
+          <p class="hint">Your LinkedIn link is added to tailored resumes. The app never signs in to these sites.</p>
+
+          <div class="sec-title" style="margin-top:18px">Base resume</div>
+          <div class="jf-resume" id="jfResumeState"></div>
+          <div class="jf-resume-actions">
+            <label class="btn btn-secondary btn-sm" for="jfFile">Upload resume<input type="file" id="jfFile" accept=".docx,.pdf,.txt,.md" hidden></label>
+            <button type="button" class="btn btn-secondary btn-sm" id="jfFromApp">Use latest application</button>
+          </div>
+          <details class="text-toggle"><summary>Paste or edit resume text</summary><textarea id="jfResumeText" rows="8"></textarea></details>
+          <p class="hint">Tip: on LinkedIn open your profile → More → Save to PDF, then upload that PDF here.</p>
+
+          <div class="sec-title" style="margin-top:18px">What you are looking for</div>
+          <div class="field"><label for="jfRoles">Target roles</label><input id="jfRoles" type="text" placeholder="Project Manager, Implementation Manager"></div>
+          <div class="field"><label for="jfLocations">Locations</label><input id="jfLocations" type="text" placeholder="Bengaluru, Kochi, Dubai, Remote"></div>
+          <div class="fields two">
+            <div class="field"><label for="jfExp">Experience (years)</label><input id="jfExp" type="text" inputmode="numeric" placeholder="12"></div>
+            <div class="field"><label for="jfWindow">Posted within</label><select id="jfWindow"><option value="day">24 hours</option><option value="3days">3 days</option><option value="week" selected>7 days</option><option value="month">30 days</option></select></div>
+            <div class="field"><label for="jfMode">Work mode</label><select id="jfMode"><option value="any">Any</option><option value="onsite">On-site</option><option value="hybrid">Hybrid</option><option value="remote">Remote</option></select></div>
+            <div class="field"><label for="jfExclude">Exclude companies</label><input id="jfExclude" type="text" placeholder="Current employer"></div>
+          </div>
+          <div class="form-err" id="jfErr" role="alert"></div>
+          <div class="row-actions"><button class="btn btn-primary" type="submit">Save profile</button><span class="muted small" id="jfSaved"></span></div>
+        </form>
+        <div class="stack" id="jfMain"></div>
+      </div>
     </section>
 
     <!-- NEW APPLICATION -->
@@ -297,6 +340,7 @@
 
 <script src="/app.js"></script>
 <script src="/interview.js"></script>
+<script src="/jobs.js"></script>
 <script src="/account.js"></script>
 </body>
 </html>

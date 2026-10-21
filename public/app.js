@@ -36,6 +36,7 @@ function route() {
   else if (view === 'history') { $('#view-history').hidden = false; loadHistory(); }
   else if (view === 'settings') { $('#view-settings').hidden = false; loadSettings(); }
   else if (view === 'account') { $('#view-account').hidden = false; loadAccount(); }
+  else if (view === 'jobs') { $('#view-jobs').hidden = false; loadJobs(); }
   else if (view === 'new') { $('#view-new').hidden = false; }
   else { $('#view-home').hidden = false; loadHome(); }
   window.scrollTo(0, 0);
