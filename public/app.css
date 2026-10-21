@@ -531,3 +531,7 @@ input.invalid, input.invalid:focus { border-color: var(--bad); box-shadow: 0 0 0
 .js-card p { margin: 0 0 14px; max-width: 90ch; }
 .js-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 14px; }
 @media (max-width: 700px) { .js-row { grid-template-columns: minmax(0, 1fr); } }
+
+.limited-card{border-left:4px solid #c8811a;display:grid;gap:10px}
+.limited-card h3{margin:0}
+.limited-card code{background:var(--bg-soft,#f3f4f6);padding:2px 6px;border-radius:4px;font-size:12px;word-break:break-word}

@@ -101,6 +101,15 @@ function renderJobsMain() {
 function renderResults(last) {
   if (!last) return `<div class="card empty-state"><div class="empty-art" aria-hidden="true"><svg viewBox="0 0 64 64"><circle cx="28" cy="28" r="14"/><path d="M38 38l12 12"/></svg></div>
     <h3>No search yet</h3><p>Save your profile, then press <b>Find matching jobs</b>. A search takes about 30–90 seconds.</p></div>`;
+  if (last.limited) return `<div class="card limited-card">
+  <h3>Google did not allow live web search on this Gemini key</h3>
+  <p class="muted">Normal Gemini works on this key, but Google Search (used to find live postings) is a separate quota, and on free keys it is often <b>0</b> or used up. A new key in the <b>same Google project</b> shares the same quota, so changing the key does not help.</p>
+  ${last.google ? `<p class="small">Google's reason: <code>${esc(last.google)}</code></p>` : ''}
+  <p class="small"><b>To get live job results:</b> in Google AI Studio turn on billing for the project (Google then charges a small fee per search), <b>or</b> create the key in a brand-new Google project, <b>or</b> add a Claude key as the Job finder key in <a class="link" href="#settings">AI settings</a>.</p>
+  ${last.keywords.length ? `<div class="sec-title sm">Best-fit job titles for your resume</div><div class="chips">${last.keywords.map(k => `<span class="chip kw">${esc(k)}</span>`).join('')}</div>` : ''}
+  ${last.summary ? `<p class="muted">${esc(last.summary)}</p>` : ''}
+  ${(last.tips || []).length ? `<ul class="list">${last.tips.map(t => `<li>${esc(t)}</li>`).join('')}</ul>` : ''}
+  <p class="small muted">Use the job-site buttons below — they search these titles directly on LinkedIn, Naukri, Indeed and more.</p></div>`;
   const savedKeys = new Set(jfState.saved.map(x => (x.title + '|' + x.company).toLowerCase()));
   return `
     ${last.sample ? '<div class="demo-banner"><span><b>Sample results.</b> Demo mode does not search the web. Connect Gemini in AI settings for real postings.</span><a class="link" href="#settings">AI settings</a></div>' : ''}
@@ -190,7 +199,7 @@ async function runSearch() {
   try {
     jfState.last = await api('/api/jobs/search', { method: 'POST' });
     jfState.portals = (await api('/api/jobs')).portals;
-    toast(`${jfState.last.jobs.length} jobs found.`, 'success');
+    toast(jfState.last.limited ? 'Live search was blocked by Google. Showing best-fit titles and job-site links.' : `${jfState.last.jobs.length} jobs found.`, jfState.last.limited ? 'error' : 'success');
   } catch (e) { toast(e.message, 'error'); }
   finally { clearInterval(iv); jfState.searching = false; renderJobsMain(); }
 }
